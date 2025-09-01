@@ -10,7 +10,7 @@
   kind: "ConfigMap",
   metadata: {
     name: "hello-script",
-    namespace: "default",
+    namespace: "default"
   },
 }
 ---
@@ -19,27 +19,27 @@
   kind: "Deployment",
   metadata: {
     name: "hello-deployment",
-    namespace: "default",
+    namespace: "default"
   },
   spec: {
     replicas: 1,
     revisionHistoryLimit: 10,
     selector: {
       matchLabels: {
-        app: "hello",
+        app: "hello"
       },
     },
     template: {
       metadata: {
         labels: {
-          app: "hello",
+          app: "hello"
         },
       },
       spec: {
         containers: [{
           command: [
             "/bin/sh",
-            "/scripts/hello.sh",
+            "/scripts/hello.sh"
           ],
           image: "alpine:latest",
           imagePullPolicy: "Always",
