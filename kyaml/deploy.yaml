@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hello-script
+  namespace: default
+data:
+  hello.sh: |
+    #!/bin/sh
+    echo "Hello, World!"
+    sleep infinity
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+        - name: alpine
+          image: alpine:latest
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh", "/scripts/hello.sh"]
+          volumeMounts:
+            - name: script-volume
+              mountPath: /scripts
+      volumes:
+        - name: script-volume
+          configMap:
+            name: hello-script

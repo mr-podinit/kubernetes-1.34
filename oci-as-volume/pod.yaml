@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ollama-pod
+spec:
+  containers:
+    - name: ollama
+      image: docker.io/ollama/ollama:0.11.6
+      imagePullPolicy: IfNotPresent
+      volumeMounts:
+        - name: oci-model
+          mountPath: /models-root
+          subPath: root/.ollama/models
+      # Sorry for the trick
+      lifecycle:
+        postStart:
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - >
+              rm -rf /root/.ollama/models/ &&
+              ln -s /models-root/root/.ollama/models /root/.ollama/
+
+  volumes:
+    - name: oci-model
+      image:
+        # See https://github.com/ThomasVitale/llm-images, even this
+        # are images with ollama inside, we use it as OCI model images
+        reference: ghcr.io/thomasvitale/ollama-llama3-2:latest
+        pullPolicy: IfNotPresent

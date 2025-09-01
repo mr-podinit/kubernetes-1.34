@@ -1,0 +1,62 @@
+{
+  apiVersion: "v1",
+  data: {
+    hello.sh: "\
+       #!/bin/sh\n\
+       echo \"Hello, World!\"\n\
+       sleep infinity\n\
+      ",
+  },
+  kind: "ConfigMap",
+  metadata: {
+    name: "hello-script",
+    namespace: "default",
+  },
+}
+---
+{
+  apiVersion: "apps/v1",
+  kind: "Deployment",
+  metadata: {
+    name: "hello-deployment",
+    namespace: "default",
+  },
+  spec: {
+    replicas: 1,
+    revisionHistoryLimit: 10,
+    selector: {
+      matchLabels: {
+        app: "hello",
+      },
+    },
+    template: {
+      metadata: {
+        labels: {
+          app: "hello",
+        },
+      },
+      spec: {
+        containers: [{
+          command: [
+            "/bin/sh",
+            "/scripts/hello.sh",
+          ],
+          image: "alpine:latest",
+          imagePullPolicy: "Always",
+          name: "alpine",
+          volumeMounts: [{
+            mountPath: "/scripts",
+            name: "script-volume",
+          }],
+        }],
+        volumes: [{
+          configMap: {
+            defaultMode: 420,
+            name: "hello-script",
+          },
+          name: "script-volume",
+        }],
+      },
+    },
+  }
+}
