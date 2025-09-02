@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web-with-sleep-hooks
+spec:
+  containers:
+  - name: web
+    image: debian:trixie
+    lifecycle:
+      preStop:
+        exec:
+          command: ["/usr/bin/sleep", "10"]
